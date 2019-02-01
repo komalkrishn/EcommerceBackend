@@ -1,7 +1,15 @@
 const express=require('express');
 const app=express();
-const Joi=require('Joi');
+
 app.use(express.json());
+const bodyparser=require('body-parser');
+const mongoose=require('mongoose');
+     
+mongoose.connect('mongodb://localhost/backend')
+         .then(()=>console.log('connecting to mongo db'))
+         .catch((err)=>console.log('failed to connect to mongodb',err));
+
+
 
 const authenticate=require('./middlewares/authentication');
 const logging=require('./middlewares/logging');
@@ -13,6 +21,7 @@ const homepath=require('./routes/home');
 const productpath=require('./routes/products');
 
 app.use('/api',productpath);
+app.use(bodyparser.json());
 app.use('/api/home',homepath);
 
 app.use(express.json());
@@ -22,7 +31,6 @@ app.use(logging);
 //views folder
 app.set('view engine', 'pug');
 app.set('views','./views');
-
  app.get('/home',(req,res) =>{
        res.render('index',{appTitle:"Ecommerce BackEnd Project" , message:"Welcome to ECommerce Web Site"});
     })
